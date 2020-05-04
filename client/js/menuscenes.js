@@ -30,7 +30,6 @@ var HUDBaseDepth = 10;
 const sounds = {};
 let deathSounds;
 let volume = 1;
-let tick;
 
 // consider making this screens a generic class
 class LandingScene extends Phaser.Scene {
@@ -38,7 +37,6 @@ class LandingScene extends Phaser.Scene {
         super({key: 'landing'});
     }
     preload(){
-        // this.load.image('sprite', 'assets/coin.png');
         this.load.image('playButton', 'assets/ui/playButton.png');
         this.load.image('UILeft', 'assets/ui/arrowLeft.png');
         this.load.image('UIRight', 'assets/ui/arrowRight.png');
@@ -59,8 +57,15 @@ class LandingScene extends Phaser.Scene {
         this.load.image('doodad11', 'assets/backdrops/doodad11.png');
         this.load.image('ball', 'assets/sprites/images/ball.png');
         this.load.image('eye', 'assets/sprites/images/eye.png');
-        this.load.image('tick', 'assets/sprites/images/tick.png');
-        this.load.image('untick', 'assets/sprites/images/untick.png');
+        this.load.image('tick', 'assets/ui/tick.png');
+        this.load.image('untick', 'assets/ui/untick.png');
+        this.load.image('logo', 'assets/ui/logo.png');
+        this.load.image('SMALL', 'assets/ui/zippy.png');
+        this.load.image('BIG', 'assets/ui/slug.png');
+        this.load.image('MEDIUM', 'assets/ui/clad.png');
+        this.load.atlasXML('zippyMiddle', 'assets/sprites/images/ZippyMiddle.png', 'assets/sprites/xml/ZippyMiddle.xml');
+        this.load.atlasXML('zippyLeft', 'assets/sprites/images/ZippyLeft.png', 'assets/sprites/xml/ZippyLeft.xml');
+        this.load.atlasXML('zippyRight', 'assets/sprites/images/ZippyRight.png', 'assets/sprites/xml/ZippyRight.xml');
         this.load.atlasXML('slimeMiddle', 'assets/sprites/images/SlimeMiddle.png', 'assets/sprites/xml/SlimeMiddle.xml');
         this.load.atlasXML('slimeLeft', 'assets/sprites/images/slimeLeft.png', 'assets/sprites/xml/slimeLeft.xml');
         this.load.atlasXML('slimeRight', 'assets/sprites/images/slimeRight.png', 'assets/sprites/xml/slimeRight.xml');
@@ -109,6 +114,16 @@ class LandingScene extends Phaser.Scene {
         this.createAnimation('slimeRightIdle', -1, 5, 'slimeRight', 'SlimeRight', 1, 1);
         this.createAnimation('slimeRightRight', -1, 5, 'slimeRight', 'SlimeRight', 1, 2);
 
+        this.createAnimation('zippyMiddleLeft', -1, 20, 'zippyMiddle', 'ZippyMiddle', 0, 1);
+        this.createAnimation('zippyMiddleIdle', -1, 20, 'zippyMiddle', 'ZippyMiddle', 1, 1);
+        this.createAnimation('zippyMiddleRight', -1, 20, 'zippyMiddle', 'ZippyMiddle', 1, 2);
+        this.createAnimation('zippyLeftLeft', -1, 20, 'zippyLeft', 'ZippyLeft', 0, 1);
+        this.createAnimation('zippyLeftIdle', -1, 20, 'zippyLeft', 'ZippyLeft', 1, 1);
+        this.createAnimation('zippyLeftRight', -1, 20, 'zippyLeft', 'ZippyLeft', 1, 2);
+        this.createAnimation('zippyRightLeft', -1, 20, 'zippyRight', 'ZippyRight', 0, 1);
+        this.createAnimation('zippyRightIdle', -1, 20, 'zippyRight', 'ZippyRight', 1, 1);
+        this.createAnimation('zippyRightRight', -1, 20, 'zippyRight', 'ZippyRight', 1, 2);
+
         this.createAnimation('metalMiddleLeft', -1, 5, 'metalMiddle', 'MetalMiddle', 0, 1);
         this.createAnimation('metalMiddleIdle', -1, 5, 'metalMiddle', 'MetalMiddle', 1, 1);
         this.createAnimation('metalMiddleRight', -1, 5, 'metalMiddle', 'MetalMiddle', 1, 2);
@@ -119,8 +134,13 @@ class LandingScene extends Phaser.Scene {
         this.createAnimation('metalRightIdle', -1, 5, 'metalRight', 'MetalRight', 2, 2);
         this.createAnimation('metalRightRight', -1, 5, 'metalRight', 'MetalRight', 2, 4);
         
-        let title = this.add.text(gameCenterX(), gameCenterY() - 350, 'Best Pong', textStyles.header);
-        offsetByWidth(title);
+        new Background(this, 5);
+
+
+        // let title = this.add.text(gameCenterX(), gameCenterY() - 350, 'Best Pong', textStyles.header);
+        let title = this.add.image(gameCenterX(), gameCenterY(), 'logo');
+        
+        // offsetByWidth(title);
         //this.ip = 'localhost';
         this.socket = '55000';
         //this.socket ="";
@@ -187,8 +207,9 @@ class LobbySelectionScene extends Phaser.Scene {
     }
 
     create() {
-        let title = this.add.text(gameCenterX(), gameCenterY() - 350, 'LobbySelection - Stubbed', textStyles.header);
+        let title = this.add.text(gameCenterX(), gameCenterY(), 'LobbySelection - Stubbed', textStyles.header);
         offsetByWidth(title);
+        new Background(this, 5);
         let playBtnAction =  () => {
            this.scene.start("lobby");
         };
@@ -247,12 +268,13 @@ class LobbyScene extends Phaser.Scene {
     constructor() {
         super({key: 'lobby'});
         this.selectedCharacter = 0;
-
+        this.doodads = 3;
     }
 
     create() {
-
         this.joinLobby();
+        new Background(this, 5);
+
         this.lobbyCards =  [];
         this.listPos = gameCenterY() - 150;//temp
 
@@ -265,7 +287,7 @@ class LobbyScene extends Phaser.Scene {
 
         // create the button object, no need for an icon, or UI text
         this.playBtn = new ImageButton(
-            gameCenterX(),
+            game.config.width -100,
             game.config.height - 55,
             "playButton",
             this,
@@ -275,11 +297,11 @@ class LobbyScene extends Phaser.Scene {
         offsetByWidth(this.playBtn);
 
         // mute audio - make checkbox sprites and button
-        let untick = this.add.sprite(game.config.width - 110, 50, 'untick').setScale(0.2);
-        tick = this.add.sprite(game.config.width - 110, 50, 'tick').setScale(0.2);
-        tick.alpha = volume ? 0 : 1; // use current volume
+        let audioUntick = this.add.sprite(game.config.width - 120, 50, 'untick').setScale(0.2);
+        let audioTick = this.add.sprite(game.config.width - 120, 50, 'tick').setScale(0.2);
+        audioTick.alpha = volume ? 0 : 1; // use current volume
         let muteBtnAction = ()=> {
-            tick.alpha = tick.alpha ? 0 : 1;
+            audioTick.alpha = audioTick.alpha ? 0 : 1;
             setTimeout(()=> {
             volume = volume ? 0 : 1;
                 game.sound.volume = volume;
@@ -287,12 +309,31 @@ class LobbyScene extends Phaser.Scene {
 
         };
         let muteBtn = new ImageButton(
-            game.config.width - 115,
+            game.config.width - 125,
             55,
             undefined,
             this,
             muteBtnAction,
             "             Mute" // slightly overlay checkbox sprites with this button
+        );
+
+        let doodadUntick = this.add.sprite(game.config.width - 120, 100, 'untick').setScale(0.2);
+        let doodadTick = this.add.sprite(game.config.width - 120, 100, 'tick').setScale(0.2);
+        doodadTick.alpha = this.doodads ? 1 : 0;
+        let doodadBtnAction = ()=> {
+            doodadTick.alpha = doodadTick.alpha ? 0 : 1;
+            setTimeout(()=> {
+                this.doodads = doodadTick.alpha ? 3 : 0;
+            }, sounds["beep"].duration + 500); // always over duration
+
+        };
+        let doodadBtn = new ImageButton(
+            game.config.width - 125,
+            105,
+            undefined,
+            this,
+            doodadBtnAction,
+            "             Doodads"
         );
 
         this.createCharacterSelectionControls();
@@ -316,7 +357,7 @@ class LobbyScene extends Phaser.Scene {
 
     triggerGameLoad(){
         Game.triggerGame = null;
-        this.scene.start("maingame");
+        this.scene.start("maingame", { doodads: this.doodads });
         this.playBtn.active = false;
     }
 
@@ -334,8 +375,7 @@ class LobbyScene extends Phaser.Scene {
     }
     createCharacterSelectionControls(){
         // this will probably be a sprite
-        this.selectedCharacterText = this.add.text(gameCenterX(), game.config.height - 155, charactersArray[this.selectedCharacter], textStyles.header);
-        offsetByWidth(this.selectedCharacterText);
+        this.selectedCharacterImage = this.add.image(gameCenterX(), game.config.height - 200, `${charactersArray[this.selectedCharacter]}`);
         let leftButtonAction = () => {
             // error handle fained connection in lobby switch
             this.selectCharacter(-1);
@@ -344,8 +384,8 @@ class LobbyScene extends Phaser.Scene {
 
         // create the button object, no need for an icon, or UI text
         let leftButton = new ImageButton(
-            gameCenterX() - 150,
-            game.config.height - 155,
+            gameCenterX() - 200,
+            game.config.height - 200,
             "UILeft",
             this,
             leftButtonAction
@@ -359,8 +399,8 @@ class LobbyScene extends Phaser.Scene {
 
         // create the button object, no need for an icon, or UI text
         let rightButton = new ImageButton(
-            gameCenterX() + 150,
-            game.config.height - 155,
+            gameCenterX() + 200,
+            game.config.height - 200,
             "UIRight",
             this,
             rightButtonAction
@@ -377,7 +417,7 @@ class LobbyScene extends Phaser.Scene {
     // if we switch to a map maybe use a key
     changeCharacter(){
         let characterMapKey = charactersArray[this.selectedCharacter]
-        this.selectedCharacterText.text = characterMapKey;
+        this.selectedCharacterImage.setTexture(`${charactersArray[this.selectedCharacter]}`);
         // and send message
         Client.sendChangeCharacter(characterMapKey);
     }

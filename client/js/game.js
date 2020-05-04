@@ -1,6 +1,10 @@
  var Game = {};
 
 class GameScene extends Phaser.Scene {
+    init(data) {
+        this.doodads = data.doodads;
+    } 
+    
     constructor() {
         super({key: 'maingame'});
         this.balls = {};
@@ -10,17 +14,7 @@ class GameScene extends Phaser.Scene {
 
     create() {
         gameClient.setScene(this);
-        this.backdropItems = {
-            floors: [ 'sand', 'grass' ],
-            pillars: [ 
-                { name: 'metalPosts', depth: 0 },
-                { name: 'treePosts', depth: 10 }
-            ],
-            doodads: [ 'doodad1', 'doodad2', 'doodad3', 'doodad4', 'doodad5', 'doodad6',
-                       'doodad7', 'doodad8', 'doodad9', 'doodad10', 'doodad11' ]
-        };
-        
-        this.buildBackdrop();
+
         Game.playerMap = {};
         //var testKey = this.input.keyboard.addKey(Phaser.Keyboard.ENTER);
         var leftKey = this.input.keyboard.addKey("LEFT");
@@ -46,13 +40,13 @@ class GameScene extends Phaser.Scene {
         this.characters = {
             "BIG": {size: 6, eyes: 4, colour: 0x00ffff, type: 'slime'},
             "MEDIUM": {size: 3, eyes: 3, colour: null, type: 'metal'},
-            "SMALL": {size: 1, eyes: 4, colour: 0xffff00, type: 'slime'}
+            "SMALL": {size: 1, eyes: 4, colour: 0x00FF00, type: 'zippy'}
         }
 
+        // set number of doodads with option menu, default at 3
+        new Background(this, this.doodads);
+
         sounds["music"].play();
-        
-        // remove leftover trails if restarted (seems to spawn an extra trail on restarts)
-        this.removeTrails();
     }
 
     spawnBall(key, x, y) {
@@ -82,19 +76,6 @@ class GameScene extends Phaser.Scene {
 
         sounds["powerup"].play();
     }
-
-    buildBackdrop() {
-        let randNum = parseInt(Math.random() * this.backdropItems.floors.length);
-        this.add.image(400, 400, this.backdropItems.floors[randNum]);
-        randNum = parseInt(Math.random() * this.backdropItems.pillars.length);
-        let posts = this.add.image(400, 400, this.backdropItems.pillars[randNum].name);
-        posts.setDepth(posts.depth + this.backdropItems.pillars[randNum].depth);
-        for (let i =0; i < 3; i++) {
-            randNum = parseInt(Math.random() * this.backdropItems.doodads.length);
-            this.add.image(400, 400, this.backdropItems.doodads[randNum]);
-        }
-    }
-
 
     createBallTrail(ball){
         let particles = this.add.particles('ball');
@@ -173,6 +154,7 @@ class GameScene extends Phaser.Scene {
 
             this.scene.switch("lobbyselection");
             this.cleanGameScene();
+            this.scene.stop("maingame");
         };
 
 

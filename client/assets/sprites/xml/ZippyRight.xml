@@ -1,0 +1,5 @@
+<TextureAtlas imagePath='ZippyRight.png'>
+  <SubTexture name='ZippyRight0' x='0' y='0' width='69' height='69'/>
+  <SubTexture name='ZippyRight2' x='69' y='0' width='69' height='69'/>
+  <SubTexture name='ZippyRight1' x='0' y='69' width='69' height='69'/>
+</TextureAtlas>
