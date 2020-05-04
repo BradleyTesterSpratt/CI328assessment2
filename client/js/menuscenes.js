@@ -1,25 +1,35 @@
 const textStyles = {
     "header":{
-        fill: '#777',
-        fontFamily: "arial",
-        fontSize: "48px",
+        fill: '#222',
+        fontFamily: "monster_font",
+        fontSize: "54px",
     },
     "button":{
         fill: '#999',
         fontFamily: "arial",
         fontSize: "32px",
     },
+    "menu-cards":{
+        fill: '#444',
+        fontFamily: "monster_font",
+        fontSize: "32px",
+    },
+
     "list-item":{
-        fill: '#222',
-        fontFamily: "arial",
+        fill: '#333',
+        fontFamily: "monster_font",
         fontSize: "16px",
     },
     "list-header":{
-        fill: '#333',
+        fill: '#555',
+        fontFamily: "monster_font",
+        fontSize: "18px",
+    },
+    "toggle-label":{
+        fill: '#000',
         fontFamily: "arial",
         fontSize: "18px",
     }
-
 };
 //https://www.kenney.nl/assets/game-icons
 const characters = {"Big":{},"Medium":{}, "Small":{}};  // probably store this somewhere more relevant
@@ -73,6 +83,7 @@ class LandingScene extends Phaser.Scene {
         this.load.atlasXML('metalLeft', 'assets/sprites/images/metalLeft.png', 'assets/sprites/xml/metalLeft.xml');
         this.load.atlasXML('metalRight', 'assets/sprites/images/metalRight.png', 'assets/sprites/xml/metalRight.xml');
         this.load.atlasXML('socket', 'assets/sprites/images/socket.png', 'assets/sprites/xml/socket.xml');
+        this.load.html('serverSocketInput', 'assets/text/serverSocketInput.html');
 
         // audio
         this.load.audio('beep', 'assets/audio/beep.wav');               // button press     - https://freesound.org/people/OwlStorm/sounds/404793/          (cc0)
@@ -134,17 +145,19 @@ class LandingScene extends Phaser.Scene {
         this.createAnimation('metalRightIdle', -1, 5, 'metalRight', 'MetalRight', 2, 2);
         this.createAnimation('metalRightRight', -1, 5, 'metalRight', 'MetalRight', 2, 4);
         
-        new Background(this, 5);
+        new Background(this, 0);
 
 
         // let title = this.add.text(gameCenterX(), gameCenterY() - 350, 'Best Pong', textStyles.header);
-        let title = this.add.image(gameCenterX(), gameCenterY(), 'logo');
+    //    let title = this.add.image(gameCenterX(), gameCenterY(), 'logo');
         
         // offsetByWidth(title);
         //this.ip = 'localhost';
         this.socket = '55000';
         //this.socket ="";
         this.ip = "localhost";
+
+
 
         if(!clientStarted){
             Client.start(this.ip, this.socket);
@@ -176,9 +189,11 @@ class LandingScene extends Phaser.Scene {
             {key: 'death2', name: 'death2'},
             {key: 'death3', name: 'death3'}
         ];
+
         deathSounds.forEach((sound)=> {
             sounds[sound.name] = game.sound.add(sound.key);
-        })
+        });
+
         // add audio to global property
         sounds["beep"] = game.sound.add('beep');
         sounds["firstblood"] = game.sound.add('firstblood');
@@ -187,11 +202,13 @@ class LandingScene extends Phaser.Scene {
         sounds["goal"] = game.sound.add('goal');
         sounds["music"] = game.sound.add('music');
         sounds["music"].loop = true;
-        
 
 
 
-
+        let ipInputForm = this.add.dom(55,55).createFromCache('serverSocketInput');
+        ipInputForm.height = 500;
+        ipInputForm.width = 500;
+        console.log(ipInputForm);
     }
 
     update(){
@@ -207,9 +224,12 @@ class LobbySelectionScene extends Phaser.Scene {
     }
 
     create() {
+        new Background(this, 0);
         let title = this.add.text(gameCenterX(), gameCenterY(), 'LobbySelection - Stubbed', textStyles.header);
         offsetByWidth(title);
-        new Background(this, 5);
+
+
+
         let playBtnAction =  () => {
            this.scene.start("lobby");
         };
@@ -222,7 +242,7 @@ class LobbySelectionScene extends Phaser.Scene {
             "playButton",
             this,
             playBtnAction,
-            "ignore this screen"
+            "Quick Join"
         );
         offsetByWidth(playBtn);
     }
@@ -238,8 +258,9 @@ var Lobby = {};
 class LobbyCard {
 
     constructor(x,y,scene, isReady, character) {
-        this.readyText = scene.add.text(x + 150, y, 'not ready', textStyles.header);
-        this.playerText = scene.add.text(x - 150, y, 'playerimage', textStyles.header);
+
+        this.readyText = scene.add.text(x , y, 'not ready', textStyles["list-header"]);
+        this.playerText = scene.add.text(x - 150, y, 'playerimage', textStyles["menu-cards"]);
         this.readyState = isReady;
         this.character = character;
     }
@@ -259,8 +280,18 @@ class LobbyCard {
 
     set character(val){
         this.selectedCharacter = val;
-        this.playerText.text = val;
+        this.playerText.text = this.getCharacterName(val);
     }
+
+    getCharacterName(val){
+        switch (val) {
+            case "BIG": return "Slug";
+            case "MEDIUM": return "Clad";
+            case "SMALL": return "Zippy";
+        }
+        return "no name";
+    }
+
 }
 
 
@@ -273,7 +304,7 @@ class LobbyScene extends Phaser.Scene {
 
     create() {
         this.joinLobby();
-        new Background(this, 5);
+        new Background(this, 0);
 
         this.lobbyCards =  [];
         this.listPos = gameCenterY() - 150;//temp
@@ -296,14 +327,21 @@ class LobbyScene extends Phaser.Scene {
         );
         offsetByWidth(this.playBtn);
 
+
+        this.createToggleButtons();
+        this.createCharacterSelectionControls();
+
+    }
+
+    createToggleButtons(){
         // mute audio - make checkbox sprites and button
-        let audioUntick = this.add.sprite(game.config.width - 120, 50, 'untick').setScale(0.2);
-        let audioTick = this.add.sprite(game.config.width - 120, 50, 'tick').setScale(0.2);
+        let audioUntick = this.add.sprite(game.config.width - 250, 50, 'untick').setScale(0.2);
+        let audioTick = this.add.sprite(game.config.width - 250, 50, 'tick').setScale(0.2);
         audioTick.alpha = volume ? 0 : 1; // use current volume
         let muteBtnAction = ()=> {
             audioTick.alpha = audioTick.alpha ? 0 : 1;
             setTimeout(()=> {
-            volume = volume ? 0 : 1;
+                volume = volume ? 0 : 1;
                 game.sound.volume = volume;
             }, sounds["beep"].duration + 500); // always over duration
 
@@ -311,14 +349,14 @@ class LobbyScene extends Phaser.Scene {
         let muteBtn = new ImageButton(
             game.config.width - 125,
             55,
-            undefined,
+            "playButton",
             this,
             muteBtnAction,
-            "             Mute" // slightly overlay checkbox sprites with this button
+            "Mute" // slightly overlay checkbox sprites with this button
         );
 
-        let doodadUntick = this.add.sprite(game.config.width - 120, 100, 'untick').setScale(0.2);
-        let doodadTick = this.add.sprite(game.config.width - 120, 100, 'tick').setScale(0.2);
+        let doodadUntick = this.add.sprite(game.config.width - 250, 100, 'untick').setScale(0.2);
+        let doodadTick = this.add.sprite(game.config.width - 250, 100, 'tick').setScale(0.2);
         doodadTick.alpha = this.doodads ? 1 : 0;
         let doodadBtnAction = ()=> {
             doodadTick.alpha = doodadTick.alpha ? 0 : 1;
@@ -330,20 +368,20 @@ class LobbyScene extends Phaser.Scene {
         let doodadBtn = new ImageButton(
             game.config.width - 125,
             105,
-            undefined,
+            "playButton",
             this,
             doodadBtnAction,
-            "             Doodads"
+            "Doodads"
         );
-
-        this.createCharacterSelectionControls();
-
     }
+
+
+
 
     newLobbyMember(pos, isReady, character){
         let newCard = new LobbyCard(gameCenterX(), this.listPos, this, isReady,  character);
         this.lobbyCards[pos] = newCard;
-        this.listPos += 25;
+        this.listPos += 45;
     }
 
     changeLobbyCharacter(position, character){
@@ -376,6 +414,7 @@ class LobbyScene extends Phaser.Scene {
     createCharacterSelectionControls(){
         // this will probably be a sprite
         this.selectedCharacterImage = this.add.image(gameCenterX(), game.config.height - 200, `${charactersArray[this.selectedCharacter]}`);
+        this.selectedCharacterImage.setScale(0.8);
         let leftButtonAction = () => {
             // error handle fained connection in lobby switch
             this.selectCharacter(-1);

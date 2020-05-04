@@ -3,8 +3,16 @@ const config = {
     type: Phaser.AUTO,
     width:800,
     height: 800,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    },
+
+    dom: {
+        createContainer: true
+    },
     scene: [LandingScene,LobbySelectionScene, LobbyScene,GameScene],
-}
+};
 
 var game;
 var canvas; //temp
@@ -15,8 +23,3 @@ window.addEventListener('load', (event) => {
     canvasContext = canvas.getContext('2d');
 });
 
-// //temp: invert canvas to make the player being played at the bottom
-// // this will break click events as the location of clicks doesnt change!!!!
-// function rotateCanvas(playerNumber){
-//     canvas.style = "transform: rotate(" + (playerNumber - 1) * 90 + "deg)";
-// }
