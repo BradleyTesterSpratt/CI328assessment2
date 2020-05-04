@@ -1,4 +1,9 @@
 const textStyles = {
+    "title":{
+        fill: '#222',
+        fontFamily: "monster_font",
+        fontSize: "84px",
+    },
     "header":{
         fill: '#222',
         fontFamily: "monster_font",
@@ -148,9 +153,16 @@ class LandingScene extends Phaser.Scene {
         new Background(this, 0);
 
 
+        let title = this.add.text(gameCenterX(), gameCenterY() - 100, 'Ultra Death', textStyles.header);
+        let title2 = this.add.text(gameCenterX(), gameCenterY() - 45, 'Monster', textStyles.header);
+        let title3 = this.add.text(gameCenterX(), gameCenterY() + 10, 'Pong', textStyles.header);
         // let title = this.add.text(gameCenterX(), gameCenterY() - 350, 'Best Pong', textStyles.header);
-    //    let title = this.add.image(gameCenterX(), gameCenterY(), 'logo');
-        
+     //   let title = this.add.image(gameCenterX(), gameCenterY(), 'logo');
+        offsetByWidth(title);
+        offsetByWidth(title2);
+        offsetByWidth(title3);
+
+
         // offsetByWidth(title);
         //this.ip = 'localhost';
         this.socket = '55000';
@@ -181,6 +193,7 @@ class LandingScene extends Phaser.Scene {
             playBtnAction,
             "Connect"
             );
+
         offsetByWidth(playBtn);
 
         deathSounds = [
