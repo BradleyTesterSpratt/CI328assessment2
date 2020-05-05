@@ -10,7 +10,7 @@ const textStyles = {
         fontSize: "54px",
     },
     "button":{
-        fill: '#999',
+        fill: '#fff',
         fontFamily: "arial",
         fontSize: "32px",
     },
@@ -163,22 +163,11 @@ class LandingScene extends Phaser.Scene {
         offsetByWidth(title3);
 
 
-        // offsetByWidth(title);
-        //this.ip = 'localhost';
-        this.socket = '55000';
-        //this.socket ="";
-        this.ip = "localhost";
 
 
-
-        if(!clientStarted){
-            Client.start(this.ip, this.socket);
-            clientStarted = true;
-        }
-
-        // error handle fained connection in lobby switch make sure this has happended
 
         let playBtnAction = () => {
+            this.startClient();
             // error handle fained connection in lobby switch
             this.scene.start("lobbyselection");
         };
@@ -218,18 +207,30 @@ class LandingScene extends Phaser.Scene {
 
 
 
-        let ipInputForm = this.add.dom(55,55).createFromCache('serverSocketInput');
-        ipInputForm.height = 500;
-        ipInputForm.width = 500;
-        console.log(ipInputForm);
+        this.ipInputForm = this.add.dom(400,600).createFromCache('serverSocketInput');
+
     }
+
+
+    startClient(){
+
+        let hostField = this.ipInputForm.getChildByName('ip');
+        let socketField  = this.ipInputForm.getChildByName('socket');
+        this.socket = socketField.value;
+
+        this.ip = hostField.value;
+
+        Client.start(this.ip, this.socket);
+
+    }
+
 
     update(){
 
     }
 }
 
-let clientStarted = false;
+// let clientStarted = false;
 
 class LobbySelectionScene extends Phaser.Scene {
     constructor() {
@@ -304,7 +305,10 @@ class LobbyCard {
         }
         return "no name";
     }
-
+    detroy(){
+        this.readyText.destroy();
+        this.playerText.destroy();
+    }
 }
 
 
@@ -390,6 +394,12 @@ class LobbyScene extends Phaser.Scene {
 
 
 
+    removeLobbyMember(pos){
+        let card = this.lobbyCards[pos];
+        this.listPos -= 45;
+        this.lobbyCards.splice(pos,pos);
+        card.destroy();
+    }
 
     newLobbyMember(pos, isReady, character){
         let newCard = new LobbyCard(gameCenterX(), this.listPos, this, isReady,  character);
@@ -425,9 +435,11 @@ class LobbyScene extends Phaser.Scene {
         }
     }
     createCharacterSelectionControls(){
+        this.selectedCharacter = 0;
         // this will probably be a sprite
         this.selectedCharacterImage = this.add.image(gameCenterX(), game.config.height - 200, `${charactersArray[this.selectedCharacter]}`);
         this.selectedCharacterImage.setScale(0.8);
+
         let leftButtonAction = () => {
             // error handle fained connection in lobby switch
             this.selectCharacter(-1);
@@ -479,10 +491,7 @@ class LobbyScene extends Phaser.Scene {
     }
 }
 
-// ***** from a1
 
-// probably dont need anything this complicated, icon functinality is pretty useful for mobile friendlyness
-// class to allow for the simple creation of buttons
 // allows buttons to be definied with an action background, icon and text
 class ImageButton {
 

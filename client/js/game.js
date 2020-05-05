@@ -45,7 +45,7 @@ class GameScene extends Phaser.Scene {
 
         // set number of doodads with option menu, default at 3
         new Background(this, this.doodads);
-
+        this.removeTrails();
         sounds["music"].play();
     }
 

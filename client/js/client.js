@@ -101,9 +101,17 @@ Client = {
         Client.socket.on('characterchange', function (data) {
             lobbyClient.changeLobbyCharacter(data.position, data.character);
         });
+
+        Client.socket.on('memberleft', function(data){
+            lobbyClient.memberLeft(data.position);
+        });
+
+
         Client.socket.on('spawnpowerup', function(data){
             gameClient.spawnPowerUp(data.x,data.y);
         });
+
+
         // this could target a specific lobby?
         Client.socket.on('alllobbymembers',function (data) {
             console.log('alllobbymemebrs');
@@ -132,6 +140,9 @@ const lobbyClient = {
     },
     newLobbyMember: function(pos, isReady, character)  {
         this.scene.newLobbyMember(pos, isReady, character);
+    },
+    memberLeft: function (pos) {
+        this.scene.removeLobbyMember(pos);
     }
 };
 

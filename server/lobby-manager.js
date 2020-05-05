@@ -55,7 +55,7 @@ class Lobby{
         client.player = null;
         client.lobby = null;
         client.member = null;
-        console.log(this);
+
         client.join(this.id);
         let lobbyMember = new LobbyMember(this.members.length);
         this.members.push(lobbyMember);
@@ -64,7 +64,13 @@ class Lobby{
         client.member = lobbyMember;
 
         this.notifyNewMember(client);
-        this.sendMembersList(client)
+        this.sendMembersList(client);
+    }
+
+    leaveLobby(client){
+        let clientPosition = client.member.position;
+        this.members.splice(clientPosition, clientPosition);
+        this.notifyMemberLeft(client);
     }
 
     changeCharacter(client, character){
@@ -101,7 +107,9 @@ class Lobby{
     sendMembersList(client){
         client.emit('alllobbymembers', this.members);
     }
-
+    notifyMemberLeft(client){
+        client.broadcast.to(this.id).emit('memberleft', {position: client.member.position });
+    }
     notifyNewMember(client){
         client.broadcast.to(this.id).emit('newmember', {position: client.member.position, isReady: client.member.isReady, character: client.member.character });
     }
@@ -111,7 +119,6 @@ class Lobby{
     }
 
     notifyMemberReadyChange(client){
-        console.log(client.member)
         io.sockets.in(this.id).emit('playerready', {position: client.member.position, isReady: client.member.isReady});
     }
 
