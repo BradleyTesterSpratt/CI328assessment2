@@ -86,6 +86,8 @@ function getAllPlayers(game){
     });
     return players;
 }
+
+
 function getAllBalls(game){
     var balls = [];
     Object.keys(game.balls).forEach(function(key){

@@ -57,8 +57,13 @@ class Lobby{
         client.member = null;
 
         client.join(this.id);
-        let lobbyMember = new LobbyMember(this.members.length);
-        this.members.push(lobbyMember);
+        let newMemberPostion = this.members.length;
+        if(this.memberLeftPos){
+            newMemberPostion = this.memberLeftPos;
+        }
+
+        let lobbyMember = new LobbyMember(newMemberPostion);
+        this.members.splice(newMemberPostion,0, lobbyMember);
 
         client.lobby = this;
         client.member = lobbyMember;
@@ -69,8 +74,12 @@ class Lobby{
 
     leaveLobby(client){
         let clientPosition = client.member.position;
-        this.members.splice(clientPosition, clientPosition);
+        this.members.splice(clientPosition, 1);
         this.notifyMemberLeft(client);
+        this.memberLeftPos = clientPosition;
+        console.log("member left");
+        console.log(this.memberLeftPos);
+        console.log(this.members);
     }
 
     changeCharacter(client, character){

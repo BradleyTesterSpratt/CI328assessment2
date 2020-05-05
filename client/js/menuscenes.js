@@ -297,6 +297,15 @@ class LobbyCard {
         this.playerText.text = this.getCharacterName(val);
     }
 
+
+    set y(val){
+        console.log(this.playerText);
+        this.readyText.y = val;
+        this.playerText.y = val;
+    }
+
+
+
     getCharacterName(val){
         switch (val) {
             case "BIG": return "Slug";
@@ -317,6 +326,9 @@ class LobbyScene extends Phaser.Scene {
         super({key: 'lobby'});
         this.selectedCharacter = 0;
         this.doodads = 3;
+        let listPos = gameCenterY() - 150;
+        let cardOffset = 45;
+        this.memberPositions = [listPos, listPos + cardOffset, listPos + (cardOffset *2), listPos + (cardOffset *3)]
     }
 
     create() {
@@ -324,7 +336,7 @@ class LobbyScene extends Phaser.Scene {
         new Background(this, 0);
 
         this.lobbyCards =  [];
-        this.listPos = gameCenterY() - 150;//temp
+
 
         let header = this.add.text(gameCenterX(), gameCenterY() - 350, 'Lobby', textStyles.header);
         offsetByWidth(header);
@@ -396,15 +408,13 @@ class LobbyScene extends Phaser.Scene {
 
     removeLobbyMember(pos){
         let card = this.lobbyCards[pos];
-        this.listPos -= 45;
-        this.lobbyCards.splice(pos,pos);
+        this.lobbyCards.splice(pos,1);
         card.destroy();
     }
 
     newLobbyMember(pos, isReady, character){
-        let newCard = new LobbyCard(gameCenterX(), this.listPos, this, isReady,  character);
+        let newCard = new LobbyCard(gameCenterX(), this.memberPositions[pos], this, isReady,  character);
         this.lobbyCards[pos] = newCard;
-        this.listPos += 45;
     }
 
     changeLobbyCharacter(position, character){

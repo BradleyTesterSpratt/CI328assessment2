@@ -160,12 +160,12 @@ class GameScene extends Phaser.Scene {
 
         // create the button object, no need for an icon, or UI text
         this.lobbySelectionBtn = new ImageButton(
-            gameCenterX() +155,
+            gameCenterX() + 155,
             game.config.height - 55,
             "playButton",
             this,
             lobbySelectionBtnAction,
-            "Lobby Selection"
+            "Selection"
         );
         
         sounds["music"].stop();
