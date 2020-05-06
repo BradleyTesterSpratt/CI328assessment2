@@ -16,11 +16,9 @@ const config = {
 };
 
 var game;
-var canvas; //temp
-var canvasContext;
+
 window.addEventListener('load', (event) => {
     game = new Phaser.Game(config);
-    canvas = game.canvas;//temp
-    canvasContext = canvas.getContext('2d');
+
 });
 
