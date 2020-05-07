@@ -55,16 +55,31 @@ class Lobby{
         client.player = null;
         client.lobby = null;
         client.member = null;
-        console.log(this);
+
         client.join(this.id);
-        let lobbyMember = new LobbyMember(this.members.length);
-        this.members.push(lobbyMember);
+        let newMemberPostion = this.members.length;
+        if(this.memberLeftPos){
+            newMemberPostion = this.memberLeftPos;
+        }
+
+        let lobbyMember = new LobbyMember(newMemberPostion);
+        this.members.splice(newMemberPostion,0, lobbyMember);
 
         client.lobby = this;
         client.member = lobbyMember;
 
         this.notifyNewMember(client);
-        this.sendMembersList(client)
+        this.sendMembersList(client);
+    }
+
+    leaveLobby(client){
+        let clientPosition = client.member.position;
+        this.members.splice(clientPosition, 1);
+        this.notifyMemberLeft(client);
+        this.memberLeftPos = clientPosition;
+        console.log("member left");
+        console.log(this.memberLeftPos);
+        console.log(this.members);
     }
 
     changeCharacter(client, character){
@@ -101,7 +116,9 @@ class Lobby{
     sendMembersList(client){
         client.emit('alllobbymembers', this.members);
     }
-
+    notifyMemberLeft(client){
+        client.broadcast.to(this.id).emit('memberleft', {position: client.member.position });
+    }
     notifyNewMember(client){
         client.broadcast.to(this.id).emit('newmember', {position: client.member.position, isReady: client.member.isReady, character: client.member.character });
     }
@@ -111,7 +128,6 @@ class Lobby{
     }
 
     notifyMemberReadyChange(client){
-        console.log(client.member)
         io.sockets.in(this.id).emit('playerready', {position: client.member.position, isReady: client.member.isReady});
     }
 

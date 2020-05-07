@@ -35,6 +35,13 @@ io.on('connection', function(client) {
 
     client.on('joinlobby', function(){
         lobbies.lobbyManager.quickJoin(client);
+
+        client.on('disconnect',function() {
+         //   disconnecting from lobby functionality
+            if(client.lobby){
+                client.lobby.leaveLobby(client);
+            }
+        });
     });
 
 
@@ -46,9 +53,7 @@ io.on('connection', function(client) {
         client.emit('initgame', { players:getAllPlayers(client.game), balls:getAllBalls(client.game)});
 
         client.on('disconnect',function() {
-            // handel this?
-     //       io.emit('remove', client.player.id);
-            //console.log('killPlayer: ' + client.player.id);
+            // disconnecting from game functionality
         });
 
     });
@@ -81,6 +86,8 @@ function getAllPlayers(game){
     });
     return players;
 }
+
+
 function getAllBalls(game){
     var balls = [];
     Object.keys(game.balls).forEach(function(key){

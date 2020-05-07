@@ -6,13 +6,30 @@
     <script src="libs/phaser.min.js"></script>
     <title>Basic multiplayer game</title>
 </head>
-<body>
-    
-</body>
+<html>
+<style type="text/css">
+    body {
+        margin: 0;
+    }
+
+    @font-face {
+        font-family: "monster_font";
+        font-style: normal;
+        font-weight: 400;
+        src: url("assets/fonts/Mrs. Monster Expanded 400.ttf");
+    }
+
+</style>
 <script src="js/menuscenes.js" type="text/javascript"></script>
 <script src="js/game.js" type="text/javascript"></script>
 <script src="js/main.js" type="text/javascript"></script>
 <script src="js/client.js" type="text/javascript"></script>
 <script src="js/player.js" type="text/javascript"></script>
 <script src="js/background.js" type="text/javascript"></script>
+<!--force fonts to load so they can be used in game -->
+<p style="font-family: 'monster_font'">.</p>
+
 </html>
+
+
+
