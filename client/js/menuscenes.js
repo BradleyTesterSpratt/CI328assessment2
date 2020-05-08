@@ -88,6 +88,7 @@ class LandingScene extends Phaser.Scene {
         this.load.atlasXML('metalLeft', 'assets/sprites/images/metalLeft.png', 'assets/sprites/xml/metalLeft.xml');
         this.load.atlasXML('metalRight', 'assets/sprites/images/metalRight.png', 'assets/sprites/xml/metalRight.xml');
         this.load.atlasXML('socket', 'assets/sprites/images/socket.png', 'assets/sprites/xml/socket.xml');
+        this.load.atlasXML('multiball', 'assets/sprites/images/multiball.png', 'assets/sprites/xml/multiball.xml');
         this.load.html('serverSocketInput', 'assets/text/serverSocketInput.html');
 
         // audio
@@ -149,6 +150,8 @@ class LandingScene extends Phaser.Scene {
         this.createAnimation('metalRightLeft', -1, 5, 'metalRight', 'MetalRight', 0, 2);
         this.createAnimation('metalRightIdle', -1, 5, 'metalRight', 'MetalRight', 2, 2);
         this.createAnimation('metalRightRight', -1, 5, 'metalRight', 'MetalRight', 2, 4);
+
+        this.createAnimation('multiball', -1, 5, 'multiball', 'multiball', 0, 3);
         
         new Background(this, 0);
 

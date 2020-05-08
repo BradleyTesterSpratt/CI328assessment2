@@ -1,0 +1,5 @@
+<TextureAtlas imagePath='multiball.png'>
+  <SubTexture name='multiball1' x='0' y='0' width='48' height='48'/>
+  <SubTexture name='multiball2' x='48' y='0' width='48' height='48'/>
+  <SubTexture name='multiball3' x='0' y='48' width='48' height='48'/>
+</TextureAtlas>

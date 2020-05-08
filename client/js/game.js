@@ -67,8 +67,8 @@ class GameScene extends Phaser.Scene {
 
     spawnPowerUp(x,y){
         // make powerup sprite
-        this.powerUp = this.add.sprite(x, y, "ball");
-
+        this.powerUp = this.add.sprite(x, y, "multiball");
+        this.powerUp.anims.play("multiball", true);
     }
 
     collectPowerUp(){
