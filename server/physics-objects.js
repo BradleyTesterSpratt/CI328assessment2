@@ -12,7 +12,6 @@ const characters = {
 function createPoint(x, y) { return { x: x, y: y }; }
 
 /* BASE CLASS FOR PHYSICS OBJECTS */
-// https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_collision_detection AABB
 class PhysicsObject {
   constructor(x, y) {
     this.x = x;
@@ -44,9 +43,9 @@ class PhysicsObject {
     this.x = this.previousX + this.velocity.x;
     this.y = this.previousY + this.velocity.y;
   }
+
   //https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection AABB
-  //https://www.sevenson.com.au/actionscript/sat/
-  //https://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection
+
   isOutOfBounds() {
     return false;
   }
