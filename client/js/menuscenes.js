@@ -218,7 +218,7 @@ class LandingScene extends Phaser.Scene {
 
     this.ip = hostField.value;
 
-    Client.start(this.ip, this.socket);
+    client.start(this.ip, this.socket);
   }
 
   update() { }
@@ -321,7 +321,7 @@ class LobbyScene extends Phaser.Scene {
     offsetByWidth(header);
 
     let playBtnAction = () => {
-      Client.memberReadyToggle();
+      client.memberReadyToggle();
     };
 
     this.playBtn = new ImageButton(
@@ -468,7 +468,7 @@ class LobbyScene extends Phaser.Scene {
     let characterMapKey = charactersArray[this.selectedCharacter]
     this.selectedCharacterImage.setTexture(`${charactersArray[this.selectedCharacter]}`);
 
-    Client.sendChangeCharacter(characterMapKey);
+    client.sendChangeCharacter(characterMapKey);
   }
 
   update() { }

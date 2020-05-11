@@ -1,42 +1,42 @@
-var Client = {};
+//var Client = {};
 
-Client = {
+const client = {
   listenersSet: false,
   start: function (ip, socket) {
-    Client.socket = io('http://' + ip + ":" + socket);
+    client.socket = io('http://' + ip + ":" + socket);
     this.setListeners();
   },
   sendMove: function (direction) {
-    Client.socket.emit('move', { direction: direction });
+    client.socket.emit('move', { direction: direction });
   },
   sendChangeCharacter: function (characterID) {
-    Client.socket.emit("changecharacter", { character: characterID });
+    client.socket.emit("changecharacter", { character: characterID });
   },
   askGameConnect: function () {
-    Client.socket.emit('gameconnect');
+    client.socket.emit('gameconnect');
   },
   sendStopMove: function () {
-    Client.socket.emit('stopmove');
+    client.socket.emit('stopmove');
   },
   askJoinLobby: function () {
-    Client.socket.emit('joinlobby');
+    client.socket.emit('joinlobby');
   },
   memberReadyToggle: function () {
-    Client.socket.emit('playerreadytoggle');
+    client.socket.emit('playerreadytoggle');
   },
   setListeners: function () {
     if (this.listenersSet === true) return;
     this.listenersSet = true;
 
-    Client.socket.on('newplayer', function (data) {
+    client.socket.on('newplayer', function (data) {
       gameClient.addNewPlayer(data.id, data.characterID, data.x, data.y);
     });
 
-    Client.socket.on('collisionplayer', function (data) {
+    client.socket.on('collisionplayer', function (data) {
       gameClient.onCollisionPlayerBall(data.ball, data.player);
     });
 
-    Client.socket.on('initgame', function (data) {
+    client.socket.on('initgame', function (data) {
       let players = data.players;
       let balls = data.balls;
 
@@ -50,63 +50,63 @@ Client = {
       }
     });
 
-    Client.socket.on('move', function (data) {
+    client.socket.on('move', function (data) {
       gameClient.movePlayer(data.id, data.x, data.y);
     });
 
-    Client.socket.on('remove', function (id) {
+    client.socket.on('remove', function (id) {
       gameClient.removePlayer(id);
     });
 
-    Client.socket.on('goalscored', function (data) {
+    client.socket.on('goalscored', function (data) {
       gameClient.goalScored(data.id);
     });
 
-    Client.socket.on('playerdeath', function (data) {
+    client.socket.on('playerdeath', function (data) {
       gameClient.playerDeath(data.id);
     });
 
-    Client.socket.on('powerupcollected', function () {
+    client.socket.on('powerupcollected', function () {
       gameClient.powerUpCollected();
     });
 
-    Client.socket.on('endgame', function (data) {
+    client.socket.on('endgame', function (data) {
       gameClient.endGame(data.id);
     });
 
-    Client.socket.on('newball', function (data) {
+    client.socket.on('newball', function (data) {
       gameClient.addNewBall(data.key, data.x, data.y);
     });
 
-    Client.socket.on('moveball', function (data) {
+    client.socket.on('moveball', function (data) {
       gameClient.moveBall(data.key, data.x, data.y);
     });
 
-    Client.socket.on('loadgame', function (data) {
+    client.socket.on('loadgame', function (data) {
       lobbyClient.triggerGame();
     });
 
-    Client.socket.on('newmember', function (data) {
+    client.socket.on('newmember', function (data) {
       lobbyClient.newLobbyMember(data.position, data.isReady, data.character);
     });
 
-    Client.socket.on('playerready', function (data) {
+    client.socket.on('playerready', function (data) {
       lobbyClient.memberReadied(data.position, data.isReady);
     });
 
-    Client.socket.on('characterchange', function (data) {
+    client.socket.on('characterchange', function (data) {
       lobbyClient.changeLobbyCharacter(data.position, data.character);
     });
 
-    Client.socket.on('memberleft', function (data) {
+    client.socket.on('memberleft', function (data) {
       lobbyClient.memberLeft(data.position);
     });
 
-    Client.socket.on('spawnpowerup', function (data) {
+    client.socket.on('spawnpowerup', function (data) {
       gameClient.spawnPowerUp(data.x, data.y);
     });
 
-    Client.socket.on('alllobbymembers', function (data) {
+    client.socket.on('alllobbymembers', function (data) {
       for (let key in data) {
         let member = data[key];
         lobbyClient.newLobbyMember(key, member.isReady, member.character, member.position);
@@ -118,7 +118,7 @@ Client = {
 const lobbyClient = {
   setScene: function (scene) {
     this.scene = scene;
-    Client.askJoinLobby();
+    client.askJoinLobby();
   },
   triggerGame: function () {
     this.scene.triggerGameLoad();
@@ -141,7 +141,7 @@ const lobbyClient = {
 const gameClient = {
   setScene: function (scene) {
     this.scene = scene;
-    Client.askGameConnect();
+    client.askGameConnect();
   },
   addNewPlayer: function (id, character, x, y) {
     this.scene.addNewPlayer(id, character, x, y);

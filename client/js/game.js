@@ -21,19 +21,19 @@ class GameScene extends Phaser.Scene {
     var rightKey = this.input.keyboard.addKey("RIGHT");
 
     leftKey.on('down', function (event) {
-      Client.sendMove(-1);
+      client.sendMove(-1);
     });
 
     rightKey.on('down', function (event) {
-      Client.sendMove(1);
+      client.sendMove(1);
     });
 
     leftKey.on('up', function (event) {
-      Client.sendStopMove();
+      client.sendStopMove();
     });
 
     rightKey.on('up', function (event) {
-      Client.sendStopMove();
+      client.sendStopMove();
     });
 
     this.characters = {

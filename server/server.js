@@ -6,12 +6,6 @@ var server = require('http').createServer();
 global.io = require('socket.io')(server);
 io = global.io;
 
-var game;
-let lobby = {};
-lobby.members = {};
-
-server.lastMemberID = 0;
-server.lastPlayerID = 0;
 
 io.on('connection', function (client) {
   client.on('playerreadytoggle', function () {
