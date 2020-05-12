@@ -43,7 +43,6 @@ class Lobby {
     this.id = roomID;
     this.members = [];
     this.isStarted = false;
-    this.gameJoinedIncrementor = 0;
   }
 
   joinLobby(client) {
@@ -153,10 +152,8 @@ class Lobby {
   }
 
   joinGame(client) {
-    let playerPosition = this.gameJoinedIncrementor;
     client.game = this.game;
-    client.player = this.game.players[playerPosition];
-    this.gameJoinedIncrementor++
+    client.player = this.game.players[client.member.position];
   }
 }
 
