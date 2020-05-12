@@ -1,17 +1,24 @@
 class Player {
   constructor(game, character, x, y) {
-    let size = character.size;
-    this.eyes = character.eyes;
-    let colour = character.colour;
-    let type = character.type.toLowerCase();
     this.game = game;
+
     let bodyContainer = this.game.add.container(x, y);
     this.bodyContainer = bodyContainer;
-    let eyeContainter = this.game.add.container(0,0);
+
+    let eyeContainter = this.game.add.container(0, 0);
     this.eyeContainter = eyeContainter;
-    let socketContainer = this.game.add.container(0,0);
+
+    let socketContainer = this.game.add.container(0, 0);
     this.socketContainer = socketContainer;
+
+    this.eyes = character.eyes;
+
+    let type = character.type.toLowerCase();
+    let colour = character.colour;
+    let size = character.size;
+
     this.rotation = this.isRotated(x, y);
+
     this.generateBody(type, size, this.eyes, colour, this.rotation);
   }
 
@@ -22,29 +29,33 @@ class Player {
     return 0;
   }
 
-  destroy(){
-    this.eyeContainter.destroy();
-    this.socketContainer.destroy();
-    this.bodyContainer.destroy();
-  }
   generateBody(type, size, eyes, colour, rotation) {
     let xPos = this.placeSprites(size, 38, 0, `${type}Middle`, this.bodyContainer, colour);
-    let leftEdge = this.game.add.sprite(xPos * -1,0,`${type}Left`).setOrigin(0.5,0.5);
+    let leftEdge = this.game.add.sprite(xPos * -1, 0, `${type}Left`).setOrigin(0.5, 0.5);
+
     if (colour != null) leftEdge.tint = colour;
-    let endOffset = (leftEdge.width - 38)/2;
+
+    let endOffset = (leftEdge.width - 38) / 2;
     leftEdge.x = leftEdge.x - endOffset;
     this.bodyContainer.add(leftEdge);
-    let rightEdge = this.game.add.sprite(xPos,0,`${type}Right`).setOrigin(0.5,0.5);
+
+    let rightEdge = this.game.add.sprite(xPos, 0, `${type}Right`).setOrigin(0.5, 0.5);
+
     if (colour != null) rightEdge.tint = colour;
+
     let yOffset = rightEdge.height - 49;
     rightEdge.x = rightEdge.x + endOffset;
     this.bodyContainer.add(rightEdge);
+
     this.placeSprites(eyes, 32, -20, 'eye', this.eyeContainter);
     this.placeSprites(eyes, 32, -20, 'socket', this.socketContainer, colour);
+
     this.bodyContainer.add(this.eyeContainter);
     this.bodyContainer.add(this.socketContainer);
+
     this.socketContainer.each(this.toggleEyes, '', true);
-    this.bodyContainer.each(object => {object.y = object.y += yOffset});
+
+    this.bodyContainer.each(object => { object.y = object.y += yOffset });
     this.bodyContainer.angle = rotation;
   }
 
@@ -52,34 +63,40 @@ class Player {
     shouldOpen ? socket.setFrame('SocketOpen') : socket.setFrame('SocketClosed');
   }
 
-  // we can probably use set lives or set eyes instead
-  loseLife(){
+  loseLife() {
     let socket = this.socketContainer.list[this.eyes - 1];
-    if(socket) socket.setFrame('SocketClosed');
+    if (socket) socket.setFrame('SocketClosed');
     this.eyes--;
   }
 
-
   placeSprites(spriteCount, widthOffset, heightOffset, sprite, container, colour = null) {
-    let xPos = widthOffset/2;
+    let xPos = widthOffset / 2;
+
     if (spriteCount == 0) {
+      //
     } else if (spriteCount % 2 == 1 && spriteCount != 0) {
       xPos = 0;
-      let middleSprite = this.game.add.sprite(xPos, heightOffset, sprite).setOrigin(0.5,0.5);
+      let middleSprite = this.game.add.sprite(xPos, heightOffset, sprite).setOrigin(0.5, 0.5);
+
       if (colour != null) middleSprite.tint = colour;
+
       container.add(middleSprite);
       xPos = widthOffset;
-      spriteCount --;
+      spriteCount--;
     }
-    for (let i = 0; i < spriteCount/2; i++) {
-      let rightSprite = this.game.add.sprite(xPos, heightOffset, sprite).setOrigin(0.5,0.5);
-      let leftSprite = this.game.add.sprite(xPos * -1, heightOffset, sprite).setOrigin(0.5,0.5);
+
+    for (let i = 0; i < spriteCount / 2; i++) {
+      let rightSprite = this.game.add.sprite(xPos, heightOffset, sprite).setOrigin(0.5, 0.5);
+      let leftSprite = this.game.add.sprite(xPos * -1, heightOffset, sprite).setOrigin(0.5, 0.5);
+
       if (colour != null) rightSprite.tint = colour;
       if (colour != null) leftSprite.tint = colour;
+
       container.add(rightSprite);
       container.add(leftSprite);
       xPos += widthOffset;
     }
+
     return xPos;
   }
 
@@ -98,19 +115,25 @@ class Player {
     let x = this.bodyContainer.x;
     let y = this.bodyContainer.y;
 
-    switch(true) {
+    switch (true) {
       case (x < newX || y < newY):
-        (this.rotation  == 0 || this.rotation == 90) ? this.animateMovement('Right') : this.animateMovement('Left');
+        (this.rotation == 0 || this.rotation == 90) ? this.animateMovement('Right') : this.animateMovement('Left');
         break;
       case (x == newX && y == newY):
         this.animateMovement('Idle');
         break;
       case (x > newX || y > newY):
-        (this.rotation  == 0 || this.rotation == 90) ? this.animateMovement('Left') : this.animateMovement('Right');
+        (this.rotation == 0 || this.rotation == 90) ? this.animateMovement('Left') : this.animateMovement('Right');
         break;
-    }    
+    }
 
     this.bodyContainer.x = newX;
     this.bodyContainer.y = newY;
-  } 
+  }
+
+  destroy() {
+    this.eyeContainter.destroy();
+    this.socketContainer.destroy();
+    this.bodyContainer.destroy();
+  }
 }
